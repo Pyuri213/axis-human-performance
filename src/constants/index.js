@@ -1,6 +1,6 @@
 const navLinks = [
   { label: "Conceito", href: "#showcase" },
-  { label: "Plataforma 3D", href: "#product-viewer" },
+  { label: "Diagnóstico", href: "#product-viewer" },
   { label: "Pilares", href: "#pillars" },
   { label: "Metodologia", href: "#methodology" },
   { label: "Ecossistema", href: "#features" },

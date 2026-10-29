@@ -1,19 +1,12 @@
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { companyInfo } from "../constants";
 import useMacbookStore from "../store";
 
 const Hero = () => {
-  const videoRef = useRef(null);
   const heroRef = useRef(null);
   const { openDiagnosisModal } = useMacbookStore();
-
-  useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.playbackRate = 1.65;
-    }
-  }, []);
 
   useGSAP(
     () => {
@@ -55,7 +48,7 @@ const Hero = () => {
     <section
       id="hero"
       ref={heroRef}
-      className="relative min-h-screen pt-28 sm:pt-32 lg:pt-36 pb-16 overflow-hidden flex flex-col items-center justify-between"
+      className="relative min-h-screen pt-28 sm:pt-32 lg:pt-36 pb-16 overflow-hidden flex flex-col items-center justify-center"
     >
       {/* Subtle Ambient Gold Radial Glow */}
       <div
@@ -95,10 +88,10 @@ const Hero = () => {
         </p>
 
         {/* Core Formula Pills: Pessoas + Estratégia + Processos + Tecnologia + Performance */}
-        <div className="hero-actions mt-6 sm:mt-8 flex flex-wrap items-center justify-center gap-2 sm:gap-3">
+        <div className="hero-actions mt-7 sm:mt-9 flex flex-wrap items-center justify-center gap-2 sm:gap-3">
           {companyInfo.formula.map((item, idx) => (
             <div key={item} className="flex items-center gap-2 sm:gap-3">
-              <span className="px-3.5 py-1.5 rounded-full text-xs sm:text-sm font-medium axis-surface axis-text-main border border-[#cfaf82]/25">
+              <span className="px-4 py-2 rounded-full text-xs sm:text-sm font-medium axis-surface axis-text-main border border-[#cfaf82]/25">
                 {item}
               </span>
               {idx < companyInfo.formula.length - 1 && (
@@ -110,50 +103,8 @@ const Hero = () => {
           ))}
         </div>
 
-        {/* Video Reveal of the AXIS Hardware & Diagnostic Platform */}
-        <div className="relative w-full max-w-5xl mx-auto my-6 sm:my-8 rounded-3xl overflow-hidden bg-black shadow-2xl border border-white/10">
-          <video
-            ref={videoRef}
-            src="/videos/hero.mp4"
-            autoPlay
-            muted
-            playsInline
-            className="w-full max-h-[420px] sm:max-h-[480px] object-cover mx-auto"
-          />
-          {/* Floating Telemetry Overlay Badges on Video */}
-          <div className="hidden md:flex absolute bottom-4 left-4 right-4 justify-between items-center px-5 py-3 rounded-2xl bg-black/75 backdrop-blur-md border border-white/10 text-left">
-            <div>
-              <p className="text-[10px] uppercase tracking-[0.2em] text-[#cfaf82]">
-                Plataforma Proprietária SaaS
-              </p>
-              <p className="text-xs sm:text-sm text-white font-semibold">
-                AXIS — Human Performance Diagnostic System
-              </p>
-            </div>
-            <div className="flex items-center gap-6 text-xs text-neutral-300">
-              <div>
-                <span className="block text-[10px] text-neutral-400">
-                  Mapeamento
-                </span>
-                <span className="font-semibold text-white">
-                  Humano & Processos
-                </span>
-              </div>
-              <div className="h-6 w-px bg-white/15" />
-              <div>
-                <span className="block text-[10px] text-neutral-400">
-                  Arquitetura
-                </span>
-                <span className="font-semibold text-[#cfaf82]">
-                  Consultoria + SaaS
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-
         {/* Primary & Secondary Call-To-Action Buttons */}
-        <div className="hero-actions flex flex-col sm:flex-row items-center justify-center gap-3.5 sm:gap-5 w-full sm:w-auto mt-2">
+        <div className="hero-actions flex flex-col sm:flex-row items-center justify-center gap-3.5 sm:gap-5 w-full sm:w-auto mt-9 sm:mt-11">
           <button
             type="button"
             onClick={() => openDiagnosisModal("Hero - Diagnóstico Executivo")}
@@ -184,7 +135,7 @@ const Hero = () => {
         </div>
 
         {/* Operational Logic Bar: Diagnosticar -> Organizar -> Executar -> Medir -> Melhorar -> Escalar */}
-        <div className="mt-10 sm:mt-12 pt-6 border-t border-white/10 w-full max-w-4xl">
+        <div className="mt-12 sm:mt-14 pt-6 border-t border-white/10 w-full max-w-4xl">
           <p className="text-[11px] uppercase tracking-[0.22em] axis-text-muted mb-3">
             Lógica Operacional AXIS
           </p>
