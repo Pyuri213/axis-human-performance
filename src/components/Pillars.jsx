@@ -11,6 +11,22 @@ const Pillars = () => {
   useGSAP(
     () => {
       gsap.fromTo(
+        ".pillars-header",
+        { opacity: 0, y: 24, filter: "blur(8px)" },
+        {
+          opacity: 1,
+          y: 0,
+          filter: "blur(0px)",
+          duration: 0.85,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 80%",
+          },
+        }
+      );
+
+      gsap.fromTo(
         ".pillar-card",
         { opacity: 0, y: 40 },
         {
@@ -37,7 +53,7 @@ const Pillars = () => {
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Section Header */}
-        <div className="max-w-3xl mx-auto text-center mb-14 sm:mb-20">
+        <div className="pillars-header max-w-3xl mx-auto text-center mb-14 sm:mb-20">
           <span className="inline-block text-xs font-bold tracking-[0.25em] uppercase text-[#cfaf82] mb-3">
             Estrutura de Governança & Atuação
           </span>

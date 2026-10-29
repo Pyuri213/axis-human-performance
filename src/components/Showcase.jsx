@@ -3,6 +3,7 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { marketPains } from "../constants";
 import useMacbookStore from "../store";
+import AnimatedCounter from "./AnimatedCounter";
 
 const Showcase = () => {
   const sectionRef = useRef(null);
@@ -10,6 +11,22 @@ const Showcase = () => {
 
   useGSAP(
     () => {
+      gsap.fromTo(
+        ".showcase-header",
+        { opacity: 0, y: 24, filter: "blur(8px)" },
+        {
+          opacity: 1,
+          y: 0,
+          filter: "blur(0px)",
+          duration: 0.85,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 80%",
+          },
+        }
+      );
+
       gsap.fromTo(
         ".pain-card",
         { opacity: 0, y: 30 },
@@ -51,7 +68,7 @@ const Showcase = () => {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-14 items-start">
           {/* Left Strategic Narrative */}
-          <div className="lg:col-span-5">
+          <div className="lg:col-span-5 showcase-header">
             <span className="inline-block text-xs font-bold tracking-[0.22em] uppercase text-[#cfaf82] mb-3">
               O Conceito Central • Sem Clichês
             </span>
@@ -82,14 +99,14 @@ const Showcase = () => {
               </p>
             </div>
 
-            {/* Executive Stats Row */}
+            {/* Executive Stats Row with Animated Counters */}
             <div className="grid grid-cols-2 gap-4 mt-8 pt-8 border-t border-white/10">
               <div className="p-4 rounded-2xl axis-surface">
                 <p className="text-xs uppercase tracking-wider axis-text-muted">
                   Abordagem Integrada
                 </p>
                 <p className="text-2xl sm:text-3xl font-bold text-gold-gradient mt-1">
-                  3 Frentes
+                  <AnimatedCounter value="3 Frentes" />
                 </p>
                 <p className="text-xs axis-text-sub mt-1">
                   Pessoas • Processos • Tecnologia
@@ -101,7 +118,7 @@ const Showcase = () => {
                   Ciclo Completo
                 </p>
                 <p className="text-2xl sm:text-3xl font-bold text-gold-gradient mt-1">
-                  6 Etapas
+                  <AnimatedCounter value="6 Etapas" />
                 </p>
                 <p className="text-xs axis-text-sub mt-1">
                   Do Diagnóstico à Escala
@@ -115,14 +132,14 @@ const Showcase = () => {
             {marketPains.map((item, idx) => (
               <div
                 key={item.id}
-                className="pain-card axis-surface rounded-3xl p-6 border border-white/10 hover:border-[#cfaf82]/50 transition-all duration-300 flex flex-col justify-between"
+                className="pain-card axis-surface rounded-3xl p-6 border border-white/10 hover:border-[#cfaf82]/50 hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between"
               >
                 <div>
                   <div className="flex items-center justify-between mb-4">
                     <span className="text-xs font-bold tracking-[0.2em] uppercase text-[#cfaf82]">
                       Gargalo Real 0{idx + 1}
                     </span>
-                    <span className="w-2.5 h-2.5 rounded-full bg-[#cfaf82]/60" />
+                    <span className="w-2.5 h-2.5 rounded-full bg-[#cfaf82]/60 animate-pulse" />
                   </div>
                   <h3 className="text-lg sm:text-xl font-bold axis-text-main mb-2">
                     {item.symptom}
@@ -159,7 +176,7 @@ const Showcase = () => {
           <button
             type="button"
             onClick={() => openDiagnosisModal("Diagnóstico de Gargalos")}
-            className="w-full md:w-auto shrink-0 px-7 py-3.5 rounded-full text-sm font-semibold text-black bg-gold-gradient hover:brightness-110 transition-all cursor-pointer shadow-lg"
+            className="w-full md:w-auto shrink-0 px-7 py-3.5 rounded-full text-sm font-semibold text-black bg-gold-gradient hover:brightness-110 hover:scale-[1.02] transition-all cursor-pointer shadow-lg"
           >
             Mapear Gargalos da Minha Empresa →
           </button>

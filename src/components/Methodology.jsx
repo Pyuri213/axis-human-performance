@@ -12,6 +12,22 @@ const Methodology = () => {
   useGSAP(
     () => {
       gsap.fromTo(
+        ".method-header",
+        { opacity: 0, y: 24, filter: "blur(8px)" },
+        {
+          opacity: 1,
+          y: 0,
+          filter: "blur(0px)",
+          duration: 0.85,
+          ease: "power2.out",
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: "top 80%",
+          },
+        }
+      );
+
+      gsap.fromTo(
         ".method-card",
         { opacity: 0, y: 30 },
         {
@@ -22,13 +38,27 @@ const Methodology = () => {
           ease: "power2.out",
           scrollTrigger: {
             trigger: sectionRef.current,
-            start: "top 78%",
+            start: "top 75%",
           },
         }
       );
     },
     { scope: sectionRef }
   );
+
+  // Animate spotlight transition when activeStep changes
+  useGSAP(
+    () => {
+      gsap.fromTo(
+        ".step-spotlight",
+        { opacity: 0, y: 12 },
+        { opacity: 1, y: 0, duration: 0.4, ease: "power2.out" }
+      );
+    },
+    { scope: sectionRef, dependencies: [activeStep] }
+  );
+
+  const progressPercentage = ((activeStep + 1) / methodologySteps.length) * 100;
 
   return (
     <section
@@ -38,7 +68,7 @@ const Methodology = () => {
     >
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <div className="max-w-3xl mx-auto text-center mb-14 sm:mb-20">
+        <div className="method-header max-w-3xl mx-auto text-center mb-14 sm:mb-20">
           <span className="inline-block text-xs font-bold tracking-[0.25em] uppercase text-[#cfaf82] mb-3">
             Metodologia Proprietária • Lógica Operacional
           </span>
@@ -53,38 +83,64 @@ const Methodology = () => {
           </p>
         </div>
 
-        {/* Interactive Step Selector Bar (Desktop & Tablet) */}
-        <div className="hidden md:grid grid-cols-6 gap-3 mb-8">
-          {methodologySteps.map((item, index) => {
-            const isSelected = activeStep === index;
-            return (
-              <button
-                key={item.step}
-                type="button"
-                onClick={() => setActiveStep(index)}
-                className={`p-4 rounded-2xl text-left transition-all duration-300 cursor-pointer border ${
-                  isSelected
-                    ? "bg-gold-gradient text-black border-transparent shadow-xl scale-[1.03]"
-                    : "axis-surface axis-text-main hover:border-[#cfaf82]/50"
-                }`}
-              >
-                <span
-                  className={`block text-xs font-bold tracking-widest ${
-                    isSelected ? "text-black/75" : "text-[#cfaf82]"
+        {/* Animated Light Pulse Track Connecting All 6 Steps (Desktop & Tablet) */}
+        <div className="hidden md:block mb-8">
+          <div className="relative h-1.5 w-full rounded-full bg-white/10 overflow-hidden mb-5">
+            {/* Active Progress Fill */}
+            <div
+              className="h-full bg-gold-gradient transition-all duration-500 ease-out rounded-full relative"
+              style={{ width: `${progressPercentage}%` }}
+            />
+            {/* Continuous Travelling Light Pulse */}
+            <div className="absolute inset-y-0 w-1/4 bg-gradient-to-r from-transparent via-white/70 to-transparent animate-pulse-beam" />
+          </div>
+
+          <div className="grid grid-cols-6 gap-3">
+            {methodologySteps.map((item, index) => {
+              const isSelected = activeStep === index;
+              const isCompleted = index <= activeStep;
+              return (
+                <button
+                  key={item.step}
+                  type="button"
+                  onClick={() => setActiveStep(index)}
+                  className={`p-4 rounded-2xl text-left transition-all duration-300 cursor-pointer border ${
+                    isSelected
+                      ? "bg-gold-gradient text-black border-transparent shadow-xl scale-[1.03]"
+                      : isCompleted
+                      ? "axis-surface axis-text-main border-[#cfaf82]/50"
+                      : "axis-surface axis-text-main hover:border-[#cfaf82]/40 opacity-75 hover:opacity-100"
                   }`}
                 >
-                  ETAPA {item.step}
-                </span>
-                <span className="block text-base lg:text-lg font-bold mt-1">
-                  {item.verb}
-                </span>
-              </button>
-            );
-          })}
+                  <div className="flex items-center justify-between">
+                    <span
+                      className={`text-xs font-bold tracking-widest ${
+                        isSelected ? "text-black/75" : "text-[#cfaf82]"
+                      }`}
+                    >
+                      ETAPA {item.step}
+                    </span>
+                    <span
+                      className={`w-2 h-2 rounded-full ${
+                        isSelected
+                          ? "bg-black animate-ping"
+                          : isCompleted
+                          ? "bg-[#cfaf82]"
+                          : "bg-white/20"
+                      }`}
+                    />
+                  </div>
+                  <span className="block text-base lg:text-lg font-bold mt-1">
+                    {item.verb}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
         </div>
 
         {/* Highlighted Step Spotlight (Desktop & Tablet) */}
-        <div className="hidden md:flex axis-surface rounded-3xl p-8 lg:p-10 border border-[#cfaf82]/35 mb-14 items-center justify-between gap-8">
+        <div className="step-spotlight hidden md:flex axis-surface rounded-3xl p-8 lg:p-10 border border-[#cfaf82]/35 mb-14 items-center justify-between gap-8">
           <div className="max-w-2xl">
             <div className="flex items-center gap-3 mb-3">
               <span className="px-3 py-1 rounded-full text-xs font-bold bg-[#cfaf82] text-black">
@@ -125,37 +181,44 @@ const Methodology = () => {
 
         {/* Complete 6-Step Grid (Always visible on Mobile, and as complete overview on Desktop/Tablet) */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
-          {methodologySteps.map((item, idx) => (
-            <div
-              key={item.step}
-              onClick={() => setActiveStep(idx)}
-              className="method-card axis-surface rounded-3xl p-6 sm:p-7 border border-white/10 hover:border-[#cfaf82]/60 transition-all duration-300 cursor-pointer flex flex-col justify-between"
-            >
-              <div>
-                <div className="flex items-center justify-between mb-4">
-                  <span className="text-xs font-bold tracking-[0.2em] uppercase text-[#cfaf82]">
-                    PASSO {item.step}
-                  </span>
-                  <span className="px-3 py-0.5 rounded-full text-xs font-semibold bg-[#cfaf82]/15 text-[#cfaf82]">
-                    {item.verb}
+          {methodologySteps.map((item, idx) => {
+            const isSelected = activeStep === idx;
+            return (
+              <div
+                key={item.step}
+                onClick={() => setActiveStep(idx)}
+                className={`method-card axis-surface rounded-3xl p-6 sm:p-7 border transition-all duration-300 cursor-pointer flex flex-col justify-between hover:-translate-y-1 ${
+                  isSelected
+                    ? "border-[#cfaf82] shadow-[0_0_25px_rgba(207,175,130,0.15)]"
+                    : "border-white/10 hover:border-[#cfaf82]/60"
+                }`}
+              >
+                <div>
+                  <div className="flex items-center justify-between mb-4">
+                    <span className="text-xs font-bold tracking-[0.2em] uppercase text-[#cfaf82]">
+                      PASSO {item.step}
+                    </span>
+                    <span className="px-3 py-0.5 rounded-full text-xs font-semibold bg-[#cfaf82]/15 text-[#cfaf82]">
+                      {item.verb}
+                    </span>
+                  </div>
+                  <h4 className="text-lg sm:text-xl font-bold axis-text-main mb-2.5">
+                    {item.title}
+                  </h4>
+                  <p className="text-xs sm:text-sm axis-text-sub leading-relaxed">
+                    {item.description}
+                  </p>
+                </div>
+
+                <div className="mt-5 pt-4 border-t border-white/10 flex items-center justify-between text-xs">
+                  <span className="axis-text-muted">Entrega:</span>
+                  <span className="font-semibold text-[#cfaf82]">
+                    {item.deliverable}
                   </span>
                 </div>
-                <h4 className="text-lg sm:text-xl font-bold axis-text-main mb-2.5">
-                  {item.title}
-                </h4>
-                <p className="text-xs sm:text-sm axis-text-sub leading-relaxed">
-                  {item.description}
-                </p>
               </div>
-
-              <div className="mt-5 pt-4 border-t border-white/10 flex items-center justify-between text-xs">
-                <span className="axis-text-muted">Entrega:</span>
-                <span className="font-semibold text-[#cfaf82]">
-                  {item.deliverable}
-                </span>
-              </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         {/* Solutions & Business Model Section */}
@@ -173,7 +236,7 @@ const Methodology = () => {
             {servicesSolutions.map((sol) => (
               <div
                 key={sol.title}
-                className="axis-surface rounded-3xl p-6 sm:p-8 border border-[#cfaf82]/20 hover:border-[#cfaf82]/60 transition-all flex flex-col justify-between"
+                className="axis-surface rounded-3xl p-6 sm:p-8 border border-[#cfaf82]/20 hover:border-[#cfaf82]/60 hover:-translate-y-1 transition-all flex flex-col justify-between"
               >
                 <div>
                   <span className="text-[11px] font-bold tracking-[0.2em] uppercase text-[#cfaf82]">
@@ -215,4 +278,3 @@ const Methodology = () => {
 };
 
 export default Methodology;
-

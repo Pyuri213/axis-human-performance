@@ -137,10 +137,76 @@ html.light .text-gold-gradient {
 }
 
 .axis-surface {
+  position: relative;
   background-color: var(--bg-secondary);
   border: 1px solid var(--border-card);
   box-shadow: var(--shadow-card);
-  transition: background-color 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
+  transition: background-color 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease, transform 0.35s ease;
+  overflow: hidden;
+}
+
+.axis-surface::before {
+  content: "";
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(
+    480px circle at var(--mouse-x, 50%) var(--mouse-y, -200%),
+    rgba(207, 175, 130, 0.13),
+    transparent 45%
+  );
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: 0;
+}
+
+.axis-surface:hover::before {
+  opacity: 1;
+}
+
+.axis-surface > * {
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes orbitSpinSlow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes orbitSpinReverse {
+  from {
+    transform: rotate(360deg);
+  }
+  to {
+    transform: rotate(0deg);
+  }
+}
+
+@keyframes pulseBeam {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(250%);
+  }
+}
+
+.animate-orbit-slow {
+  animation: orbitSpinSlow 28s linear infinite;
+}
+
+.animate-orbit-reverse {
+  animation: orbitSpinReverse 36s linear infinite;
+}
+
+.animate-pulse-beam {
+  animation: pulseBeam 3.2s ease-in-out infinite;
 }
 
 .axis-glass {

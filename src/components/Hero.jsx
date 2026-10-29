@@ -6,6 +6,7 @@ import useMacbookStore from "../store";
 
 const Hero = () => {
   const heroRef = useRef(null);
+  const logoOrbitalRef = useRef(null);
   const { openDiagnosisModal } = useMacbookStore();
 
   useGSAP(
@@ -13,42 +14,74 @@ const Hero = () => {
       const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
       tl.fromTo(
         ".hero-badge",
-        { opacity: 0, y: 20 },
-        { opacity: 1, y: 0, duration: 0.7 }
+        { opacity: 0, y: 20, filter: "blur(6px)" },
+        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.7 }
       )
         .fromTo(
           ".hero-logo",
-          { opacity: 0, scale: 0.92 },
-          { opacity: 1, scale: 1, duration: 0.9 },
+          { opacity: 0, scale: 0.88, filter: "blur(8px)" },
+          { opacity: 1, scale: 1, filter: "blur(0px)", duration: 1 },
           "-=0.4"
         )
         .fromTo(
           ".hero-title",
-          { opacity: 0, y: 28 },
-          { opacity: 1, y: 0, duration: 0.8 },
+          { opacity: 0, y: 30, filter: "blur(10px)" },
+          { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.9 },
           "-=0.5"
         )
         .fromTo(
           ".hero-subtitle",
-          { opacity: 0, y: 20 },
-          { opacity: 1, y: 0, duration: 0.8 },
+          { opacity: 0, y: 22, filter: "blur(6px)" },
+          { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.8 },
           "-=0.5"
         )
         .fromTo(
           ".hero-actions",
           { opacity: 0, y: 18 },
-          { opacity: 1, y: 0, duration: 0.7 },
+          { opacity: 1, y: 0, duration: 0.7, stagger: 0.12 },
           "-=0.4"
         );
     },
     { scope: heroRef }
   );
 
+  // Interactive 3D Parallax on Hero Logo
+  const handleMouseMove = (e) => {
+    if (!logoOrbitalRef.current || window.innerWidth < 1024) return;
+    const rect = e.currentTarget.getBoundingClientRect();
+    const relX = (e.clientX - rect.left) / rect.width - 0.5;
+    const relY = (e.clientY - rect.top) / rect.height - 0.5;
+
+    gsap.to(logoOrbitalRef.current, {
+      rotateY: relX * 16,
+      rotateX: -relY * 16,
+      x: relX * 14,
+      y: relY * 10,
+      duration: 0.6,
+      ease: "power2.out",
+    });
+  };
+
+  const handleMouseLeave = () => {
+    if (!logoOrbitalRef.current) return;
+    gsap.to(logoOrbitalRef.current, {
+      rotateY: 0,
+      rotateX: 0,
+      x: 0,
+      y: 0,
+      duration: 0.8,
+      ease: "power3.out",
+    });
+  };
+
   return (
     <section
       id="hero"
       ref={heroRef}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
       className="relative min-h-screen pt-28 sm:pt-32 lg:pt-36 pb-16 overflow-hidden flex flex-col items-center justify-center"
+      style={{ perspective: "1000px" }}
     >
       {/* Subtle Ambient Gold Radial Glow */}
       <div
@@ -65,12 +98,31 @@ const Hero = () => {
           </span>
         </div>
 
-        {/* Official AXIS Full Logo Lockup */}
-        <div className="hero-logo mb-6 sm:mb-8">
+        {/* Official AXIS Full Logo Lockup with Animated Orbital Rings */}
+        <div
+          ref={logoOrbitalRef}
+          className="hero-logo relative mb-8 sm:mb-10 py-4 px-8 flex items-center justify-center"
+          style={{ transformStyle: "preserve-3d" }}
+        >
+          {/* Outer Rotating Orbital Ring */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute w-64 h-64 sm:w-80 sm:h-80 lg:w-96 lg:h-96 rounded-full border border-[#cfaf82]/15 animate-orbit-slow flex items-center justify-between"
+          >
+            <span className="w-2 h-2 rounded-full bg-[#cfaf82]/70 -ml-1 shadow-[0_0_12px_#cfaf82]" />
+            <span className="w-1.5 h-1.5 rounded-full bg-[#cfaf82]/50 -mr-1" />
+          </div>
+
+          {/* Inner Counter-Rotating Dashed Ring */}
+          <div
+            aria-hidden="true"
+            className="pointer-events-none absolute w-48 h-48 sm:w-64 sm:h-64 lg:w-72 lg:h-72 rounded-full border border-dashed border-[#cfaf82]/20 animate-orbit-reverse"
+          />
+
           <img
             src="/brand/axis-logo.svg"
             alt="AXIS Human Performance Diagnostic System"
-            className="w-56 sm:w-72 md:w-80 lg:w-96 mx-auto object-contain drop-shadow-2xl"
+            className="w-56 sm:w-72 md:w-80 lg:w-96 mx-auto object-contain drop-shadow-2xl relative z-10"
           />
         </div>
 
@@ -91,7 +143,7 @@ const Hero = () => {
         <div className="hero-actions mt-7 sm:mt-9 flex flex-wrap items-center justify-center gap-2 sm:gap-3">
           {companyInfo.formula.map((item, idx) => (
             <div key={item} className="flex items-center gap-2 sm:gap-3">
-              <span className="px-4 py-2 rounded-full text-xs sm:text-sm font-medium axis-surface axis-text-main border border-[#cfaf82]/25">
+              <span className="px-4 py-2 rounded-full text-xs sm:text-sm font-medium axis-surface axis-text-main border border-[#cfaf82]/25 hover:border-[#cfaf82] hover:-translate-y-0.5 transition-all">
                 {item}
               </span>
               {idx < companyInfo.formula.length - 1 && (
@@ -108,7 +160,7 @@ const Hero = () => {
           <button
             type="button"
             onClick={() => openDiagnosisModal("Hero - Diagnóstico Executivo")}
-            className="w-full sm:w-auto px-8 py-4 rounded-full text-sm sm:text-base font-semibold text-black bg-gold-gradient hover:brightness-110 transition-all duration-300 shadow-xl cursor-pointer flex items-center justify-center gap-2.5"
+            className="w-full sm:w-auto px-8 py-4 rounded-full text-sm sm:text-base font-semibold text-black bg-gold-gradient hover:brightness-110 hover:scale-[1.03] transition-all duration-300 shadow-xl cursor-pointer flex items-center justify-center gap-2.5"
           >
             <span>Agendar Diagnóstico Empresarial</span>
             <svg
@@ -134,8 +186,13 @@ const Hero = () => {
           </a>
         </div>
 
-        {/* Operational Logic Bar: Diagnosticar -> Organizar -> Executar -> Medir -> Melhorar -> Escalar */}
-        <div className="mt-12 sm:mt-14 pt-6 border-t border-white/10 w-full max-w-4xl">
+        {/* Operational Logic Bar with Animated Light Pulse Beam */}
+        <div className="mt-12 sm:mt-14 pt-6 w-full max-w-4xl relative">
+          {/* Animated Pulse Line Divider */}
+          <div className="relative w-full h-px bg-white/10 overflow-hidden mb-5">
+            <div className="w-1/3 h-full bg-gradient-to-r from-transparent via-[#cfaf82] to-transparent animate-pulse-beam" />
+          </div>
+
           <p className="text-[11px] uppercase tracking-[0.22em] axis-text-muted mb-3">
             Lógica Operacional AXIS
           </p>

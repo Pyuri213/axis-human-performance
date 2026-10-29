@@ -26,6 +26,20 @@ const App = () => {
     root.classList.add(theme);
   }, [theme]);
 
+  // Global spotlight tracker for .axis-surface cards
+  useEffect(() => {
+    const handlePointerMove = (e) => {
+      const card = e.target.closest?.(".axis-surface");
+      if (!card) return;
+      const rect = card.getBoundingClientRect();
+      card.style.setProperty("--mouse-x", `${e.clientX - rect.left}px`);
+      card.style.setProperty("--mouse-y", `${e.clientY - rect.top}px`);
+    };
+
+    window.addEventListener("pointermove", handlePointerMove, { passive: true });
+    return () => window.removeEventListener("pointermove", handlePointerMove);
+  }, []);
+
   return (
     <main className="min-h-screen overflow-x-hidden selection:bg-[#cfaf82] selection:text-black">
       <NavBar />
