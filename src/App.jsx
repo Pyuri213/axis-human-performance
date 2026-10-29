@@ -12,6 +12,7 @@ import Features from "./components/Features";
 import Highlights from "./components/Highlights";
 import Footer from "./components/Footer";
 import DiagnosisModal from "./components/DiagnosisModal";
+import ScrollToTop from "./components/ScrollToTop";
 import useMacbookStore from "./store";
 
 gsap.registerPlugin(ScrollTrigger);
@@ -38,6 +39,7 @@ const App = () => {
       <Highlights />
       <Footer />
       <DiagnosisModal />
+      <ScrollToTop />
     </main>
   );
 };
