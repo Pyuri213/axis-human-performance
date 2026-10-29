@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 560" fill="none">
+  <defs>
+    <linearGradient id="axisGoldFull" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F2E1C4" />
+      <stop offset="30%" stop-color="#D4B589" />
+      <stop offset="65%" stop-color="#9A7A4F" />
+      <stop offset="100%" stop-color="#E5C99E" />
+    </linearGradient>
+    <filter id="dropGlow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="5" stdDeviation="6" flood-color="#000000" flood-opacity="0.55" />
+    </filter>
+  </defs>
+
+  <g filter="url(#dropGlow)">
+    <!-- TOP MONOGRAM SYMBOL -->
+    <g transform="translate(200, 10)">
+      <!-- Stylized A legs -->
+      <path
+        d="M200 12 L108 228 L144 228 L200 92 L256 228 L292 228 Z"
+        fill="url(#axisGoldFull)"
+      />
+      <!-- Horizontal axis bars -->
+      <rect x="48" y="148" width="134" height="5.5" rx="2.75" fill="url(#axisGoldFull)" />
+      <rect x="218" y="148" width="134" height="5.5" rx="2.75" fill="url(#axisGoldFull)" />
+      <!-- End spheres -->
+      <circle cx="44" cy="150.75" r="10" fill="url(#axisGoldFull)" />
+      <circle cx="356" cy="150.75" r="10" fill="url(#axisGoldFull)" />
+      <!-- Center ring -->
+      <circle
+        cx="200"
+        cy="150.75"
+        r="14.5"
+        stroke="url(#axisGoldFull)"
+        stroke-width="5.5"
+        fill="none"
+      />
+    </g>
+
+    <!-- WORDMARK: Λ X I S -->
+    <g transform="translate(0, 20)">
+      <!-- Λ (Lambda / Stylized A) -->
+      <path
+        d="M148 258 L82 396 L104 396 L148 300 L192 396 L214 396 Z"
+        fill="url(#axisGoldFull)"
+      />
+
+      <!-- X (with subtle stencil break on top-left leg like the wall sculpture) -->
+      <path
+        d="M392 262 L414 262 L308 396 L286 396 Z"
+        fill="url(#axisGoldFull)"
+      />
+      <path
+        d="M286 262 L308 262 L344 308 L333 322 Z"
+        fill="url(#axisGoldFull)"
+      />
+      <path
+        d="M356 326 L367 312 L414 396 L392 396 Z"
+        fill="url(#axisGoldFull)"
+      />
+
+      <!-- I -->
+      <rect x="502" y="262" width="20" height="134" fill="url(#axisGoldFull)" />
+
+      <!-- S -->
+      <path
+        d="M674 260 C635 260 612 276 612 298 C612 322 638 331 668 336 C694 341 710 347 710 361 C710 376 691 384 664 384 C638 384 619 376 608 368 L598 384 C612 394 636 401 664 401 C706 401 731 384 731 359 C731 334 705 324 673 319 C646 314 632 308 632 295 C632 282 648 276 673 276 C694 276 710 282 720 288 L729 272 C716 264 696 260 674 260 Z"
+        fill="url(#axisGoldFull)"
+      />
+    </g>
+
+    <!-- DIVIDER LINE -->
+    <rect x="76" y="446" width="648" height="2.5" fill="url(#axisGoldFull)" opacity="0.85" />
+
+    <!-- SUBTITLE 1: HUMAN PERFORMANCE -->
+    <text
+      x="400"
+      y="485"
+      text-anchor="middle"
+      fill="url(#axisGoldFull)"
+      font-family="SemiBold, -apple-system, BlinkMacSystemFont, sans-serif"
+      font-size="21"
+      font-weight="600"
+      letter-spacing="14"
+    >
+      HUMAN PERFORMANCE
+    </text>
+
+    <!-- SUBTITLE 2: DIAGNOSTIC SYSTEM -->
+    <text
+      x="400"
+      y="526"
+      text-anchor="middle"
+      fill="url(#axisGoldFull)"
+      font-family="Regular, -apple-system, BlinkMacSystemFont, sans-serif"
+      font-size="25"
+      font-weight="400"
+      letter-spacing="16"
+    >
+      DIAGNOSTIC SYSTEM
+    </text>
+  </g>
+</svg>
+

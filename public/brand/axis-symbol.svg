@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 260" fill="none">
+  <defs>
+    <linearGradient id="axisGold" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#F0DEC0" />
+      <stop offset="35%" stop-color="#CFAF82" />
+      <stop offset="70%" stop-color="#9E7D52" />
+      <stop offset="100%" stop-color="#E2C69B" />
+    </linearGradient>
+    <filter id="softShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="4" stdDeviation="5" flood-color="#000000" flood-opacity="0.5" />
+    </filter>
+  </defs>
+
+  <g filter="url(#softShadow)">
+    <!-- Stylized A legs -->
+    <path
+      d="M200 18 L112 225 L146 225 L200 94 L254 225 L288 225 Z"
+      fill="url(#axisGold)"
+    />
+
+    <!-- Left horizontal axis bar -->
+    <rect x="58" y="149" width="124" height="5" rx="2.5" fill="url(#axisGold)" />
+
+    <!-- Right horizontal axis bar -->
+    <rect x="218" y="149" width="124" height="5" rx="2.5" fill="url(#axisGold)" />
+
+    <!-- Left sphere -->
+    <circle cx="54" cy="151.5" r="9.5" fill="url(#axisGold)" />
+
+    <!-- Right sphere -->
+    <circle cx="346" cy="151.5" r="9.5" fill="url(#axisGold)" />
+
+    <!-- Center orbital ring -->
+    <circle
+      cx="200"
+      cy="151.5"
+      r="14"
+      stroke="url(#axisGold)"
+      stroke-width="5"
+      fill="none"
+    />
+  </g>
+</svg>
+
