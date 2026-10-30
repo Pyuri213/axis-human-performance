@@ -55,3 +55,4 @@ const AnimatedCounter = ({ value, className = "" }) => {
 };
 
 export default AnimatedCounter;
+

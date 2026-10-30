@@ -95,7 +95,7 @@ html.light {
 
 html {
   width: 100%;
-  overflow-x: hidden;
+  overflow-x: clip;
   scroll-behavior: smooth;
   background-color: var(--bg-primary);
   color: var(--text-primary);
@@ -104,7 +104,7 @@ html {
 
 body {
   width: 100%;
-  overflow-x: hidden;
+  overflow-x: clip;
   background-color: var(--bg-primary);
   color: var(--text-secondary);
   font-family: var(--font-regular);
@@ -136,8 +136,11 @@ html.light .text-gold-gradient {
   border-color: var(--border-gold);
 }
 
-.axis-surface {
+:where(.axis-surface) {
   position: relative;
+}
+
+.axis-surface {
   background-color: var(--bg-secondary);
   border: 1px solid var(--border-card);
   box-shadow: var(--shadow-card);

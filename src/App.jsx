@@ -41,7 +41,7 @@ const App = () => {
   }, []);
 
   return (
-    <main className="min-h-screen overflow-x-hidden selection:bg-[#cfaf82] selection:text-black">
+    <main className="min-h-screen overflow-x-clip selection:bg-[#cfaf82] selection:text-black">
       <NavBar />
       <Hero />
       <Showcase />
