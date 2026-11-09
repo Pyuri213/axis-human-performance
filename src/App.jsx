@@ -5,11 +5,14 @@ import NavBar from "./components/NavBar";
 import Hero from "./components/Hero";
 import Showcase from "./components/Showcase";
 import ProductViewer from "./components/ProductViewer";
+import MaturityQuiz from "./components/MaturityQuiz";
 import Pillars from "./components/Pillars";
+import BeforeAfter from "./components/BeforeAfter";
 import Methodology from "./components/Methodology";
 import Performance from "./components/Performance";
 import Features from "./components/Features";
 import Highlights from "./components/Highlights";
+import ExecutiveFAQ from "./components/ExecutiveFAQ";
 import Footer from "./components/Footer";
 import DiagnosisModal from "./components/DiagnosisModal";
 import ScrollToTop from "./components/ScrollToTop";
@@ -46,11 +49,14 @@ const App = () => {
       <Hero />
       <Showcase />
       <ProductViewer />
+      <MaturityQuiz />
       <Pillars />
+      <BeforeAfter />
       <Methodology />
       <Performance />
       <Features />
       <Highlights />
+      <ExecutiveFAQ />
       <Footer />
       <DiagnosisModal />
       <ScrollToTop />

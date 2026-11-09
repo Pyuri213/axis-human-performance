@@ -1,10 +1,11 @@
 const navLinks = [
   { label: "Conceito", href: "#showcase" },
   { label: "Diagnóstico", href: "#product-viewer" },
+  { label: "Auto-Avaliação", href: "#maturity-quiz" },
   { label: "Pilares", href: "#pillars" },
   { label: "Metodologia", href: "#methodology" },
-  { label: "Ecossistema", href: "#features" },
   { label: "Diferenciais", href: "#highlights" },
+  { label: "FAQ", href: "#faq" },
 ];
 
 const companyInfo = {
@@ -377,12 +378,208 @@ const servicesSolutions = [
   },
 ];
 
+const maturityQuizQuestions = [
+  {
+    id: "q1",
+    pillar: "Processos & Autonomia",
+    question:
+      "Se você (sócio/fundador) precisar se ausentar por 15 dias hoje, o que acontece com a empresa?",
+    options: [
+      {
+        label: "A operação trava ou cai drasticamente; quase tudo depende de mim.",
+        score: 25,
+        diagnosis: "Dependência Crítica do Fundador",
+      },
+      {
+        label: "Funciona parcialmente, mas surgem muitos erros e ligações diárias.",
+        score: 55,
+        diagnosis: "Processos Sem Padronização Completa",
+      },
+      {
+        label: "Segue rodando com processos documentados e líderes autônomos.",
+        score: 95,
+        diagnosis: "Alta Autonomia Operacional",
+      },
+    ],
+  },
+  {
+    id: "q2",
+    pillar: "Comportamento & Liderança",
+    question:
+      "Como você avalia o alinhamento comportamental da sua equipe e liderança hoje?",
+    options: [
+      {
+        label: "Há conflitos frequentes, ruídos de comunicação e líderes sobrecarregados.",
+        score: 25,
+        diagnosis: "Desalinhamento Comportamental e de Liderança",
+      },
+      {
+        label: "Temos pessoas boas, mas algumas parecem estar na função errada.",
+        score: 60,
+        diagnosis: "Necessidade de Mapeamento de Perfil por Função",
+      },
+      {
+        label: "Perfis mapeados, funções bem distribuídas e liderança madura.",
+        score: 95,
+        diagnosis: "Sinergia Humana Consolidada",
+      },
+    ],
+  },
+  {
+    id: "q3",
+    pillar: "Estrutura Comercial & AXIS OS",
+    question:
+      "Como funcionam os processos internos e o funil comercial da sua empresa?",
+    options: [
+      {
+        label: "Estão apenas na cabeça das pessoas; não temos manual nem CRM estruturado.",
+        score: 20,
+        diagnosis: "Ausência de Sistema Operacional (AXIS OS)",
+      },
+      {
+        label: "Temos algumas planilhas e rotinas, mas falta padrão no pós-venda e entrega.",
+        score: 55,
+        diagnosis: "Operação Parcialmente Estruturada",
+      },
+      {
+        label: "Tudo documentado em checklists, contratos padronizados e CRM ativo.",
+        score: 95,
+        diagnosis: "Engenharia Operacional Madura",
+      },
+    ],
+  },
+  {
+    id: "q4",
+    pillar: "Indicadores & Tecnologia",
+    question:
+      "De que forma as decisões estratégicas são tomadas na organização?",
+    options: [
+      {
+        label: "Quase sempre no 'feeling' e urgência, apagando incêndios do dia a dia.",
+        score: 20,
+        diagnosis: "Gestão Reativa Sem Telemetria",
+      },
+      {
+        label: "Olhamos o financeiro básico, mas faltam indicadores claros de produtividade.",
+        score: 55,
+        diagnosis: "Visibilidade Parcial de Indicadores",
+      },
+      {
+        label: "Acompanhamos dashboards em tempo real, metas e planos de ação claros.",
+        score: 95,
+        diagnosis: "Gestão Orientada a Dados",
+      },
+    ],
+  },
+];
+
+const beforeAfterData = {
+  withoutAxis: [
+    "Processos presos apenas na memória do dono e de funcionários antigos.",
+    "Líderes sobrecarregados apagando incêndios operacionais todos os dias.",
+    "Profissionais talentosos rendendo pouco por estarem na função incompatível com seu perfil.",
+    "Empresa que vende e fatura, mas vive desorganizada e sem previsibilidade de caixa.",
+    "Decisões tomadas por intuição ('feeling'), sem diagnóstico prévio nem indicadores.",
+    "Crescimento que gera mais estresse e caos em vez de liberdade e lucro.",
+  ],
+  withAxis: [
+    "AXIS OS implantado: processos documentados, checklists, contratos e rotinas claras.",
+    "Análise Corporal e Comportamental Empresarial: a pessoa certa na função certa.",
+    "Lideranças destravadas, comunicação limpa e redução drástica de conflitos internos.",
+    "Operação comercial estruturada com CRM, funil de vendas e acompanhamento de entregas.",
+    "Plataforma AXIS com dashboards, histórico evolutivo e planos de ação objetivos.",
+    "Estrutura replicável e autônoma, preparada para escalar sem depender 100% do fundador.",
+  ],
+};
+
+const operationPhases = [
+  {
+    phase: "FASE 01",
+    name: "ORGANIZAR",
+    subtitle: "Construção da Base Sólida",
+    items: [
+      "Diagnóstico comportamental e organizacional",
+      "Definição clara de cargos, funções e contratos",
+      "Organização financeira e separação de contas",
+      "Desenho dos processos essenciais e identidade",
+    ],
+  },
+  {
+    phase: "FASE 02",
+    name: "OPERAR",
+    subtitle: "Execução com Método",
+    items: [
+      "Prospecção e funil comercial ativo no CRM",
+      "Atendimento padronizado e contratos seguros",
+      "Entrega de excelência com checklists operacionais",
+      "Acompanhamento próximo da jornada do cliente",
+    ],
+  },
+  {
+    phase: "FASE 03",
+    name: "MEDIR E DOCUMENTAR",
+    subtitle: "Refinamento por Indicadores",
+    items: [
+      "Monitoramento de KPIs de conversão e produtividade",
+      "Auditoria de resultados, falhas e custos",
+      "Coleta de feedback e melhoria de processos",
+      "Consolidação do manual operacional (AXIS OS)",
+    ],
+  },
+  {
+    phase: "FASE 04",
+    name: "ESCALAR",
+    subtitle: "Expansão Sustentável & SaaS",
+    items: [
+      "Equipe autônoma e lideranças preparadas",
+      "Uso intensivo da Plataforma AXIS e automações",
+      "Processos replicáveis e receita recorrente",
+      "Crescimento sem sobrecarga dos sócios",
+    ],
+  },
+];
+
+const executiveFaqs = [
+  {
+    question: "A AXIS é uma consultoria tradicional?",
+    answer:
+      "Não. Consultorias tradicionais costumam entregar relatórios teóricos que acabam engavetados. A AXIS é uma empresa de Inteligência e Performance Empresarial que atua na prática unindo três pontas: Comportamento Humano (Michele Mattos), Engenharia Operacional e Processos (Andriely) e Tecnologia Escalável (Pablo).",
+  },
+  {
+    question:
+      "Como funciona a Análise Corporal e Comportamental Empresarial na prática?",
+    answer:
+      "Diferente de uma análise individual isolada, nossa abordagem corporativa mapeia o perfil dos sócios, gestores e colaboradores para identificar como cada pessoa pensa, decide, reage à pressão e lidera. Isso permite resolver conflitos internos, destravar líderes e alocar cada profissional na função onde ele entrega máxima performance.",
+  },
+  {
+    question:
+      "Minha empresa já vende bem, mas vive desorganizada. Por onde começamos?",
+    answer:
+      "Começamos sempre pela Etapa 01: Diagnosticar. Realizamos uma radiografia humana e operacional para descobrir onde estão os gargalos invisíveis (processos centralizados no dono, falhas de comunicação, retrabalho ou falta de indicadores) e, em seguida, estruturamos o seu AXIS OS (Sistema Operacional da Empresa).",
+  },
+  {
+    question: "O que é o AXIS OS e como ele liberta o dono do operacional?",
+    answer:
+      "O AXIS OS é a documentação viva de como a sua empresa funciona: processos passo a passo, checklists, scripts comerciais, modelos de contratos, matriz de responsabilidades e rituais de gestão. Com tudo padronizado, a operação deixa de depender da memória das pessoas e passa a rodar com autonomia.",
+  },
+  {
+    question: "A AXIS atende apenas empresas de Maringá/PR ou de todo o Brasil?",
+    answer:
+      "Nossa sede fica em Maringá — Paraná, onde realizamos atendimentos presenciais e imersões in-company na região, e também atendemos empresas de todo o Brasil através de nossa estrutura digital e da Plataforma AXIS.",
+  },
+  {
+    question: "Para qual porte de empresa a AXIS é recomendada?",
+    answer:
+      "Atendemos desde empresas em fase de estruturação e crescimento acelerado (que precisam organizar a base para não colapsar) até médias e grandes operações que buscam alinhar lideranças, profissionalizar processos e implementar governança orientada a dados.",
+  },
+];
+
 const footerLinks = [
   { label: "Diagnóstico Empresarial", href: "#showcase" },
+  { label: "Auto-Avaliação Online", href: "#maturity-quiz" },
   { label: "Os 3 Pilares", href: "#pillars" },
   { label: "Metodologia AXIS", href: "#methodology" },
-  { label: "Plataforma SaaS", href: "#product-viewer" },
-  { label: "Governança & Privacidade", href: "#footer" },
+  { label: "Perguntas Frequentes", href: "#faq" },
 ];
 
 export {
@@ -398,5 +595,9 @@ export {
   features,
   featureSequence,
   servicesSolutions,
+  maturityQuizQuestions,
+  beforeAfterData,
+  operationPhases,
+  executiveFaqs,
   footerLinks,
 };
