@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import useMacbookStore from "../store";
 import ShinyText from "./ui/ShinyText";
 import MagneticButton from "./ui/MagneticButton";
@@ -83,19 +83,26 @@ const DiagnosisModal = () => {
   const { isDiagnosisModalOpen, closeDiagnosisModal, diagnosisPreset } =
     useMacbookStore();
 
+  const bodyRef = useRef(null);
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState(initialFormState);
-  const [errorMsg, setErrorMsg] = useState("");
+  const [fieldErrors, setFieldErrors] = useState({});
   const [shakeKey, setShakeKey] = useState(0);
   const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
     if (isDiagnosisModalOpen) {
       setStep(1);
-      setErrorMsg("");
+      setFieldErrors({});
       setSubmitted(false);
     }
   }, [isDiagnosisModalOpen]);
+
+  useEffect(() => {
+    if (bodyRef.current) {
+      bodyRef.current.scrollTo({ top: 0, behavior: "smooth" });
+    }
+  }, [step, submitted]);
 
   useEffect(() => {
     if (!isDiagnosisModalOpen) return;
@@ -116,7 +123,18 @@ const DiagnosisModal = () => {
 
   if (!isDiagnosisModalOpen) return null;
 
+  const clearFieldError = (field) => {
+    if (fieldErrors[field]) {
+      setFieldErrors((prev) => {
+        const next = { ...prev };
+        delete next[field];
+        return next;
+      });
+    }
+  };
+
   const toggleArrayItem = (field, item) => {
+    clearFieldError(field);
     setFormData((prev) => {
       const exists = prev[field].includes(item);
       const next = exists
@@ -127,29 +145,39 @@ const DiagnosisModal = () => {
   };
 
   const handleNextStep = () => {
-    if (
-      !formData.name.trim() ||
-      !formData.company.trim() ||
-      formData.whatsapp.replace(/\D/g, "").length < 10
-    ) {
-      setErrorMsg(
-        "Preencha Nome, Empresa e um WhatsApp válido com DDD para continuar."
-      );
+    const errors = {};
+    if (!formData.name.trim()) {
+      errors.name = "Informe seu nome completo.";
+    }
+    if (!formData.company.trim()) {
+      errors.company = "Informe o nome da empresa.";
+    }
+    if (formData.whatsapp.replace(/\D/g, "").length < 10) {
+      errors.whatsapp = "Informe um WhatsApp válido com DDD.";
+    }
+
+    if (Object.keys(errors).length > 0) {
+      setFieldErrors(errors);
       setShakeKey((k) => k + 1);
       return;
     }
-    setErrorMsg("");
+
+    setFieldErrors({});
     setStep(2);
   };
 
   const handleSubmit = (e) => {
-    e.preventDefault();
+    e?.preventDefault();
+    if (step === 1) {
+      handleNextStep();
+      return;
+    }
     if (formData.fronts.length === 0) {
-      setErrorMsg("Selecione ao menos uma Frente de Interesse.");
+      setFieldErrors({ fronts: "Selecione ao menos uma Frente de Interesse." });
       setShakeKey((k) => k + 1);
       return;
     }
-    setErrorMsg("");
+    setFieldErrors({});
     setSubmitted(true);
   };
 
@@ -183,121 +211,194 @@ const DiagnosisModal = () => {
     return `https://wa.me/5544999999999?text=${encodeURIComponent(text)}`;
   };
 
-  const inputClass =
-    "w-full px-4 py-3 rounded-xl axis-surface axis-text-main text-base sm:text-sm focus:outline-none focus:border-[#cfaf82] transition-colors";
+  const getFieldClass = (fieldName) =>
+    `w-full px-4 py-3 rounded-xl axis-surface axis-text-main text-base sm:text-sm outline-none transition-[border-color,box-shadow] duration-200 focus:border-[#cfaf82] focus:ring-2 focus:ring-[#cfaf82]/20 ${
+      fieldErrors[fieldName] ? "border-amber-400/80 ring-2 ring-amber-400/20" : ""
+    }`;
+
+  const isNameValid = formData.name.trim().length >= 2;
+  const isCompanyValid = formData.company.trim().length >= 2;
+  const isWhatsAppValid = formData.whatsapp.replace(/\D/g, "").length >= 10;
 
   return (
     <div
       onClick={(e) => {
         if (e.target === e.currentTarget) closeDiagnosisModal();
       }}
-      className="t-modal-backdrop fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-6 bg-black/75 backdrop-blur-md overflow-y-auto"
+      className="t-modal-backdrop fixed inset-0 z-[100] flex items-center justify-center p-2.5 sm:p-6 bg-black/75 backdrop-blur-md"
       role="dialog"
       aria-modal="true"
       aria-labelledby="modal-title"
     >
-      <div className="t-modal-panel axis-surface w-full max-w-2xl rounded-3xl p-5 sm:p-8 lg:p-9 border border-[#cfaf82]/40 my-auto max-h-[92dvh] overflow-y-auto overscroll-contain">
-        {/* Top Bar: Brand Badge + Close Button (Flex layout prevents overlap) */}
-        <div className="flex items-start justify-between gap-3 mb-4">
-          <div className="flex items-center gap-2.5 min-w-0">
-            <img
-              src="/brand/axis-symbol.svg"
-              alt="AXIS"
-              className="w-7 h-7 sm:w-8 sm:h-8 object-contain shrink-0"
-            />
-            <ShinyText className="text-[11px] sm:text-xs font-bold tracking-[0.2em] uppercase leading-snug">
-              Atendimento Executivo • Maringá / PR & Brasil
-            </ShinyText>
-          </div>
-
-          <button
-            type="button"
-            onClick={closeDiagnosisModal}
-            aria-label="Fechar modal"
-            className="w-10 h-10 shrink-0 rounded-full axis-surface flex items-center justify-center axis-text-main hover:border-[#cfaf82] active:scale-90 transition-[transform,border-color] duration-200 cursor-pointer"
-          >
-            ✕
-          </button>
-        </div>
-
-        {!submitted ? (
-          <>
-            <h3
-              id="modal-title"
-              className="text-xl sm:text-2xl lg:text-3xl font-bold axis-text-main leading-tight"
-            >
-              Diagnóstico de Maturidade Empresarial AXIS
-            </h3>
-            <p className="text-xs sm:text-sm axis-text-sub mt-1.5 mb-5">
-              {step === 1
-                ? "Informe os dados da sua organização para iniciarmos o mapeamento executivo."
-                : "Selecione os pilares e gargalos prioritários para prepararmos sua análise."}
-            </p>
-
-            {/* Step Progress Indicator */}
-            <div className="mb-6">
-              <div className="flex items-center justify-between text-[11px] font-semibold uppercase tracking-wider mb-2">
-                <span className="text-[#cfaf82] tabular-nums">
-                  Etapa {step} de 2
-                </span>
-                <span className="axis-text-muted">
-                  {step === 1
-                    ? "Perfil da Empresa"
-                    : "O que você busca na AXIS"}
-                </span>
-              </div>
-              <div className="w-full h-1.5 rounded-full bg-white/10 overflow-hidden">
-                <div
-                  className="h-full bg-gold-gradient rounded-full transition-[width] duration-300 ease-out"
-                  style={{ width: step === 1 ? "50%" : "100%" }}
-                />
-              </div>
+      {/* 3-Zone Flex Modal: Fixed Header + Scrollable Body + Fixed Footer */}
+      <div className="t-modal-panel axis-surface w-full max-w-2xl rounded-3xl border border-[#cfaf82]/40 flex flex-col max-h-[90dvh] overflow-hidden">
+        {/* ZONE 1: Fixed Header */}
+        <div className="shrink-0 px-5 sm:px-8 pt-5 sm:pt-7 pb-4 border-b border-white/10">
+          <div className="flex items-start justify-between gap-3 mb-3">
+            <div className="flex items-center gap-2.5 min-w-0">
+              <img
+                src="/brand/axis-symbol.svg"
+                alt="AXIS"
+                className="w-7 h-7 sm:w-8 sm:h-8 object-contain shrink-0"
+              />
+              <ShinyText className="text-[11px] sm:text-xs font-bold tracking-[0.2em] uppercase leading-snug">
+                Atendimento Executivo • Maringá / PR & Brasil
+              </ShinyText>
             </div>
 
-            {errorMsg && (
-              <div
-                key={shakeKey}
-                className="t-shake mb-4 px-4 py-2.5 rounded-xl bg-amber-500/15 border border-amber-400/40 text-amber-300 text-xs sm:text-sm font-medium"
-              >
-                {errorMsg}
-              </div>
-            )}
+            <button
+              type="button"
+              onClick={closeDiagnosisModal}
+              aria-label="Fechar modal"
+              className="w-10 h-10 shrink-0 rounded-full axis-surface flex items-center justify-center axis-text-main hover:border-[#cfaf82] active:scale-90 transition-[transform,border-color] duration-200 cursor-pointer"
+            >
+              ✕
+            </button>
+          </div>
 
-            <form onSubmit={handleSubmit}>
+          {!submitted && (
+            <>
+              <h3
+                id="modal-title"
+                className="text-lg sm:text-2xl font-bold axis-text-main leading-tight"
+              >
+                Diagnóstico de Maturidade Empresarial AXIS
+              </h3>
+              <p className="text-xs sm:text-sm axis-text-sub mt-1">
+                {step === 1
+                  ? "Informe os dados da sua organização para iniciarmos o mapeamento."
+                  : "Selecione os pilares e gargalos prioritários para sua análise."}
+              </p>
+
+              {/* Step Progress Bar */}
+              <div className="mt-4">
+                <div className="flex items-center justify-between text-[11px] font-semibold uppercase tracking-wider mb-1.5">
+                  <span className="text-[#cfaf82] tabular-nums">
+                    Etapa {step} de 2
+                  </span>
+                  <span className="axis-text-muted">
+                    {step === 1
+                      ? "Perfil da Empresa"
+                      : "O que você busca na AXIS"}
+                  </span>
+                </div>
+                <div className="w-full h-1.5 rounded-full bg-white/10 overflow-hidden">
+                  <div
+                    className="h-full bg-gold-gradient rounded-full transition-[width] duration-300 ease-out"
+                    style={{ width: step === 1 ? "50%" : "100%" }}
+                  />
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+
+        {/* ZONE 2: Scrollable Body */}
+        <div
+          ref={bodyRef}
+          className="flex-1 overflow-y-auto overscroll-contain px-5 sm:px-8 py-5"
+        >
+          {!submitted ? (
+            <form id="diagnosis-form" onSubmit={handleSubmit}>
               {step === 1 ? (
                 <div key="modal-step-1" className="t-step-enter space-y-4">
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                      <label className="block text-xs font-semibold uppercase tracking-wider axis-text-muted mb-1.5">
-                        Seu Nome *
-                      </label>
+                      <div className="flex items-center justify-between mb-1.5">
+                        <label className="text-xs font-semibold uppercase tracking-wider axis-text-muted">
+                          Seu Nome *
+                        </label>
+                        {isNameValid && (
+                          <span className="text-[11px] font-bold text-[#cfaf82]">
+                            ✓
+                          </span>
+                        )}
+                      </div>
                       <input
                         type="text"
-                        required
                         value={formData.name}
-                        onChange={(e) =>
-                          setFormData({ ...formData, name: e.target.value })
-                        }
+                        onChange={(e) => {
+                          clearFieldError("name");
+                          setFormData({ ...formData, name: e.target.value });
+                        }}
                         placeholder="Ex: João Silva"
-                        className={inputClass}
+                        className={getFieldClass("name")}
                       />
+                      {fieldErrors.name && (
+                        <p
+                          key={`err-name-${shakeKey}`}
+                          className="t-shake mt-1 text-xs text-amber-400"
+                        >
+                          {fieldErrors.name}
+                        </p>
+                      )}
                     </div>
 
                     <div>
-                      <label className="block text-xs font-semibold uppercase tracking-wider axis-text-muted mb-1.5">
-                        Empresa *
-                      </label>
+                      <div className="flex items-center justify-between mb-1.5">
+                        <label className="text-xs font-semibold uppercase tracking-wider axis-text-muted">
+                          Empresa *
+                        </label>
+                        {isCompanyValid && (
+                          <span className="text-[11px] font-bold text-[#cfaf82]">
+                            ✓
+                          </span>
+                        )}
+                      </div>
                       <input
                         type="text"
-                        required
                         value={formData.company}
-                        onChange={(e) =>
-                          setFormData({ ...formData, company: e.target.value })
-                        }
+                        onChange={(e) => {
+                          clearFieldError("company");
+                          setFormData({ ...formData, company: e.target.value });
+                        }}
                         placeholder="Nome da sua empresa"
-                        className={inputClass}
+                        className={getFieldClass("company")}
                       />
+                      {fieldErrors.company && (
+                        <p
+                          key={`err-company-${shakeKey}`}
+                          className="t-shake mt-1 text-xs text-amber-400"
+                        >
+                          {fieldErrors.company}
+                        </p>
+                      )}
                     </div>
+                  </div>
+
+                  <div>
+                    <div className="flex items-center justify-between mb-1.5">
+                      <label className="text-xs font-semibold uppercase tracking-wider axis-text-muted">
+                        WhatsApp Corporativo *
+                      </label>
+                      {isWhatsAppValid && (
+                        <span className="text-[11px] font-bold text-[#cfaf82]">
+                          ✓
+                        </span>
+                      )}
+                    </div>
+                    <input
+                      type="tel"
+                      inputMode="tel"
+                      value={formData.whatsapp}
+                      onChange={(e) => {
+                        clearFieldError("whatsapp");
+                        setFormData({
+                          ...formData,
+                          whatsapp: formatWhatsApp(e.target.value),
+                        });
+                      }}
+                      placeholder="(44) 99999-9999"
+                      className={getFieldClass("whatsapp")}
+                    />
+                    {fieldErrors.whatsapp && (
+                      <p
+                        key={`err-wa-${shakeKey}`}
+                        className="t-shake mt-1 text-xs text-amber-400"
+                      >
+                        {fieldErrors.whatsapp}
+                      </p>
+                    )}
                   </div>
 
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -310,7 +411,7 @@ const DiagnosisModal = () => {
                         onChange={(e) =>
                           setFormData({ ...formData, segment: e.target.value })
                         }
-                        className={inputClass}
+                        className={getFieldClass("segment")}
                       >
                         {SEGMENTS.map((seg) => (
                           <option key={seg} value={seg}>
@@ -329,7 +430,7 @@ const DiagnosisModal = () => {
                         onChange={(e) =>
                           setFormData({ ...formData, role: e.target.value })
                         }
-                        className={inputClass}
+                        className={getFieldClass("role")}
                       >
                         {ROLES.map((r) => (
                           <option key={r} value={r}>
@@ -350,7 +451,7 @@ const DiagnosisModal = () => {
                         onChange={(e) =>
                           setFormData({ ...formData, teamSize: e.target.value })
                         }
-                        className={inputClass}
+                        className={getFieldClass("teamSize")}
                       >
                         {TEAM_SIZES.map((size) => (
                           <option key={size} value={size}>
@@ -369,7 +470,7 @@ const DiagnosisModal = () => {
                         onChange={(e) =>
                           setFormData({ ...formData, revenue: e.target.value })
                         }
-                        className={inputClass}
+                        className={getFieldClass("revenue")}
                       >
                         {REVENUE_RANGES.map((rev) => (
                           <option key={rev} value={rev}>
@@ -378,43 +479,6 @@ const DiagnosisModal = () => {
                         ))}
                       </select>
                     </div>
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-semibold uppercase tracking-wider axis-text-muted mb-1.5">
-                      WhatsApp Corporativo *
-                    </label>
-                    <input
-                      type="tel"
-                      required
-                      inputMode="tel"
-                      value={formData.whatsapp}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          whatsapp: formatWhatsApp(e.target.value),
-                        })
-                      }
-                      placeholder="(44) 99999-9999"
-                      className={inputClass}
-                    />
-                  </div>
-
-                  <div className="pt-3 flex flex-col-reverse sm:flex-row items-center justify-end gap-3">
-                    <button
-                      type="button"
-                      onClick={closeDiagnosisModal}
-                      className="w-full sm:w-auto px-6 py-3 rounded-full text-xs sm:text-sm font-semibold axis-surface axis-text-sub active:scale-[0.97] transition-transform cursor-pointer"
-                    >
-                      Cancelar
-                    </button>
-                    <MagneticButton
-                      type="button"
-                      onClick={handleNextStep}
-                      className="w-full sm:w-auto px-8 py-3.5 rounded-full text-xs sm:text-sm font-bold text-black bg-gold-gradient hover:brightness-110 cursor-pointer shadow-lg"
-                    >
-                      Continuar para Diagnóstico →
-                    </MagneticButton>
                   </div>
                 </div>
               ) : (
@@ -445,6 +509,14 @@ const DiagnosisModal = () => {
                         );
                       })}
                     </div>
+                    {fieldErrors.fronts && (
+                      <p
+                        key={`err-fronts-${shakeKey}`}
+                        className="t-shake mt-2 text-xs text-amber-400"
+                      >
+                        {fieldErrors.fronts}
+                      </p>
+                    )}
                   </div>
 
                   {/* Principais Dores / Gargalos */}
@@ -524,102 +596,134 @@ const DiagnosisModal = () => {
                         setFormData({ ...formData, notes: e.target.value })
                       }
                       placeholder="Ex: queremos estruturar lideranças antes de abrir a segunda unidade..."
-                      className={inputClass}
+                      className={getFieldClass("notes")}
                     />
                   </div>
+                </div>
+              )}
+            </form>
+          ) : (
+            <div className="text-center py-4 t-step-enter">
+              <div className="t-success-circle w-16 h-16 rounded-full bg-[#cfaf82]/20 text-[#cfaf82] flex items-center justify-center mx-auto mb-5">
+                <svg
+                  className="w-8 h-8"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  aria-hidden="true"
+                >
+                  <path className="t-success-check" d="M5 13l4 4L19 7" />
+                </svg>
+              </div>
+              <h3 className="text-2xl font-bold axis-text-main mb-2">
+                Protocolo Executivo Estruturado!
+              </h3>
+              <p className="text-sm axis-text-sub max-w-md mx-auto mb-5">
+                Os dados de{" "}
+                <strong className="axis-text-main">{formData.company}</strong>{" "}
+                foram organizados para a diretoria de operações da AXIS
+                (Andriely — COO).
+              </p>
 
-                  <div className="pt-2 flex flex-col-reverse sm:flex-row items-center justify-between gap-3">
+              <div className="p-4 rounded-2xl bg-black/20 border border-white/10 text-left text-xs space-y-1.5 max-w-lg mx-auto axis-text-sub break-words">
+                <p>
+                  <strong className="axis-text-main">Responsável:</strong>{" "}
+                  {formData.name} ({formData.role})
+                </p>
+                <p>
+                  <strong className="axis-text-main">Empresa:</strong>{" "}
+                  {formData.company} • {formData.segment} ({formData.teamSize})
+                </p>
+                <p>
+                  <strong className="axis-text-main">Frentes:</strong>{" "}
+                  {formData.fronts.join(", ")}
+                </p>
+                {formData.painPoints.length > 0 && (
+                  <p>
+                    <strong className="axis-text-main">Dores mapeadas:</strong>{" "}
+                    {formData.painPoints.join("; ")}
+                  </p>
+                )}
+                <p>
+                  <strong className="axis-text-main">Urgência:</strong>{" "}
+                  {formData.urgency}
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* ZONE 3: Fixed Footer (Always visible on Smartphone, Tablet & Desktop) */}
+        <div className="shrink-0 px-5 sm:px-8 py-4 border-t border-white/10 bg-black/20 backdrop-blur-md">
+          {!submitted ? (
+            <div className="flex flex-col gap-2.5">
+              <div className="flex flex-col-reverse sm:flex-row items-center justify-between gap-2.5">
+                {step === 1 ? (
+                  <>
+                    <button
+                      type="button"
+                      onClick={closeDiagnosisModal}
+                      className="w-full sm:w-auto px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold axis-surface axis-text-sub active:scale-[0.97] transition-transform cursor-pointer"
+                    >
+                      Cancelar
+                    </button>
+                    <MagneticButton
+                      type="button"
+                      onClick={handleNextStep}
+                      className="w-full sm:w-auto px-7 py-3.5 rounded-full text-xs sm:text-sm font-bold text-black bg-gold-gradient hover:brightness-110 cursor-pointer shadow-lg"
+                    >
+                      Avançar para Etapa 2 →
+                    </MagneticButton>
+                  </>
+                ) : (
+                  <>
                     <button
                       type="button"
                       onClick={() => {
-                        setErrorMsg("");
+                        setFieldErrors({});
                         setStep(1);
                       }}
-                      className="w-full sm:w-auto px-6 py-3 rounded-full text-xs sm:text-sm font-semibold axis-surface axis-text-sub active:scale-[0.97] transition-transform cursor-pointer"
+                      className="w-full sm:w-auto px-5 py-2.5 rounded-full text-xs sm:text-sm font-semibold axis-surface axis-text-sub active:scale-[0.97] transition-transform cursor-pointer"
                     >
                       ← Voltar
                     </button>
                     <MagneticButton
                       type="submit"
-                      className="w-full sm:w-auto px-8 py-3.5 rounded-full text-xs sm:text-sm font-bold text-black bg-gold-gradient hover:brightness-110 cursor-pointer shadow-lg"
+                      form="diagnosis-form"
+                      className="w-full sm:w-auto px-7 py-3.5 rounded-full text-xs sm:text-sm font-bold text-black bg-gold-gradient hover:brightness-110 cursor-pointer shadow-lg"
                     >
                       Gerar Protocolo de Diagnóstico →
                     </MagneticButton>
-                  </div>
-                </div>
-              )}
-            </form>
-          </>
-        ) : (
-          <div className="text-center py-4 sm:py-6 t-step-enter">
-            <div className="t-success-circle w-16 h-16 rounded-full bg-[#cfaf82]/20 text-[#cfaf82] flex items-center justify-center mx-auto mb-5">
-              <svg
-                className="w-8 h-8"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
-                <path className="t-success-check" d="M5 13l4 4L19 7" />
-              </svg>
-            </div>
-            <h3 className="text-2xl font-bold axis-text-main mb-2">
-              Protocolo Executivo Estruturado!
-            </h3>
-            <p className="text-sm axis-text-sub max-w-md mx-auto mb-6">
-              Os dados de{" "}
-              <strong className="axis-text-main">{formData.company}</strong>{" "}
-              foram organizados para a diretoria de operações da AXIS (Andriely
-              — COO).
-            </p>
-
-            <div className="p-4 rounded-2xl bg-black/20 border border-white/10 text-left text-xs space-y-1.5 mb-6 max-w-lg mx-auto axis-text-sub break-words">
-              <p>
-                <strong className="axis-text-main">Responsável:</strong>{" "}
-                {formData.name} ({formData.role})
-              </p>
-              <p>
-                <strong className="axis-text-main">Empresa:</strong>{" "}
-                {formData.company} • {formData.segment} ({formData.teamSize})
-              </p>
-              <p>
-                <strong className="axis-text-main">Frentes:</strong>{" "}
-                {formData.fronts.join(", ")}
-              </p>
-              {formData.painPoints.length > 0 && (
-                <p>
-                  <strong className="axis-text-main">Dores mapeadas:</strong>{" "}
-                  {formData.painPoints.join("; ")}
-                </p>
-              )}
-              <p>
-                <strong className="axis-text-main">Urgência:</strong>{" "}
-                {formData.urgency}
+                  </>
+                )}
+              </div>
+              <p className="text-[11px] text-center sm:text-right axis-text-muted">
+                Leva menos de 40 segundos • Atendimento 100% sigiloso
               </p>
             </div>
-
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+          ) : (
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-2.5">
               <a
                 href={buildWhatsAppUrl()}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full sm:w-auto px-7 py-3.5 rounded-full text-sm font-bold text-black bg-gold-gradient hover:brightness-110 active:scale-[0.97] transition-[transform,filter] shadow-lg"
+                className="w-full sm:w-auto text-center px-7 py-3.5 rounded-full text-xs sm:text-sm font-bold text-black bg-gold-gradient hover:brightness-110 active:scale-[0.97] transition-[transform,filter] shadow-lg"
               >
                 Enviar Direto pelo WhatsApp Comercial →
               </a>
               <button
                 type="button"
                 onClick={closeDiagnosisModal}
-                className="w-full sm:w-auto px-6 py-3.5 rounded-full text-sm font-semibold axis-surface axis-text-main active:scale-[0.97] transition-transform cursor-pointer"
+                className="w-full sm:w-auto px-6 py-3 rounded-full text-xs sm:text-sm font-semibold axis-surface axis-text-main active:scale-[0.97] transition-transform cursor-pointer"
               >
                 Concluir
               </button>
             </div>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );
