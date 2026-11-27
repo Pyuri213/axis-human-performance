@@ -88,11 +88,17 @@ const ExecutiveFAQ = () => {
                   </span>
                 </button>
 
-                {isOpen && (
-                  <div className="px-5 sm:px-6 pb-6 pt-1 border-t border-white/10 text-xs sm:text-base axis-text-sub leading-relaxed">
-                    {faq.answer}
+                <div
+                  className="t-accordion"
+                  data-open={isOpen ? "true" : "false"}
+                  aria-hidden={!isOpen}
+                >
+                  <div>
+                    <div className="px-5 sm:px-6 pb-6 pt-3 border-t border-white/10 text-xs sm:text-base axis-text-sub leading-relaxed">
+                      {faq.answer}
+                    </div>
                   </div>
-                )}
+                </div>
               </div>
             );
           })}
@@ -112,7 +118,7 @@ const ExecutiveFAQ = () => {
           <button
             type="button"
             onClick={() => openDiagnosisModal("Dúvida Executiva - FAQ")}
-            className="w-full sm:w-auto shrink-0 px-6 py-3 rounded-full text-xs sm:text-sm font-bold text-black bg-gold-gradient hover:brightness-110 transition-all cursor-pointer"
+            className="w-full sm:w-auto shrink-0 px-6 py-3 rounded-full text-xs sm:text-sm font-bold text-black bg-gold-gradient hover:brightness-110 active:scale-[0.97] transition-[transform,filter] duration-200 cursor-pointer"
           >
             Falar com Especialista →
           </button>

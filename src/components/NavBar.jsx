@@ -182,7 +182,7 @@ const NavBar = () => {
 
       {/* Mobile & Tablet Navigation Drawer */}
       {mobileMenuOpen && (
-        <div className="lg:hidden axis-glass border-t border-white/10 px-6 py-6 animate-fadeIn">
+        <div className="lg:hidden axis-glass border-t border-white/10 px-6 py-6 t-drawer">
           <ul className="flex flex-col gap-4">
             {navLinks.map(({ label, href }) => (
               <li key={label}>
@@ -207,7 +207,7 @@ const NavBar = () => {
                 setMobileMenuOpen(false);
                 openDiagnosisModal("Diagnóstico Mobile");
               }}
-              className="w-full py-3 rounded-full text-sm font-semibold text-black bg-gold-gradient shadow-lg flex items-center justify-center gap-2"
+              className="w-full py-3 rounded-full text-sm font-semibold text-black bg-gold-gradient active:scale-[0.98] transition-transform shadow-lg flex items-center justify-center gap-2"
             >
               <span>Agendar Diagnóstico Empresarial</span>
               <svg

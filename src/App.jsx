@@ -29,18 +29,30 @@ const App = () => {
     root.classList.add(theme);
   }, [theme]);
 
-  // Global spotlight tracker for .axis-surface cards
+  // Global spotlight tracker for .axis-surface cards (fine pointers only, rAF-throttled)
   useEffect(() => {
+    if (!window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
+      return;
+    }
+
+    let rafId = null;
     const handlePointerMove = (e) => {
       const card = e.target.closest?.(".axis-surface");
       if (!card) return;
-      const rect = card.getBoundingClientRect();
-      card.style.setProperty("--mouse-x", `${e.clientX - rect.left}px`);
-      card.style.setProperty("--mouse-y", `${e.clientY - rect.top}px`);
+      if (rafId) cancelAnimationFrame(rafId);
+      const { clientX, clientY } = e;
+      rafId = requestAnimationFrame(() => {
+        const rect = card.getBoundingClientRect();
+        card.style.setProperty("--mouse-x", `${clientX - rect.left}px`);
+        card.style.setProperty("--mouse-y", `${clientY - rect.top}px`);
+      });
     };
 
     window.addEventListener("pointermove", handlePointerMove, { passive: true });
-    return () => window.removeEventListener("pointermove", handlePointerMove);
+    return () => {
+      if (rafId) cancelAnimationFrame(rafId);
+      window.removeEventListener("pointermove", handlePointerMove);
+    };
   }, []);
 
   return (

@@ -28,6 +28,23 @@ const DiagnosisModal = () => {
     setSubmitted(false);
   }, [diagnosisPreset, isDiagnosisModalOpen]);
 
+  useEffect(() => {
+    if (!isDiagnosisModalOpen) return;
+
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") closeDiagnosisModal();
+    };
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [isDiagnosisModalOpen, closeDiagnosisModal]);
+
   if (!isDiagnosisModalOpen) return null;
 
   const handleSubmit = (e) => {
@@ -55,18 +72,21 @@ const DiagnosisModal = () => {
 
   return (
     <div
-      className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-6 bg-black/75 backdrop-blur-md overflow-y-auto"
+      onClick={(e) => {
+        if (e.target === e.currentTarget) closeDiagnosisModal();
+      }}
+      className="t-modal-backdrop fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-6 bg-black/75 backdrop-blur-md overflow-y-auto"
       role="dialog"
       aria-modal="true"
       aria-labelledby="modal-title"
     >
-      <div className="axis-surface w-full max-w-2xl rounded-3xl p-6 sm:p-8 lg:p-10 border border-[#cfaf82]/40 relative my-auto max-h-[92vh] overflow-y-auto">
+      <div className="t-modal-panel axis-surface w-full max-w-2xl rounded-3xl p-6 sm:p-8 lg:p-10 border border-[#cfaf82]/40 relative my-auto max-h-[92dvh] overflow-y-auto">
         {/* Close Button */}
         <button
           type="button"
           onClick={closeDiagnosisModal}
           aria-label="Fechar modal"
-          className="absolute top-5 right-5 w-9 h-9 rounded-full axis-surface flex items-center justify-center axis-text-main hover:border-[#cfaf82] cursor-pointer"
+          className="absolute top-5 right-5 w-9 h-9 rounded-full axis-surface flex items-center justify-center axis-text-main hover:border-[#cfaf82] active:scale-90 transition-[transform,border-color] duration-200 cursor-pointer"
         >
           ✕
         </button>
@@ -109,7 +129,7 @@ const DiagnosisModal = () => {
                       setFormData({ ...formData, name: e.target.value })
                     }
                     placeholder="Ex: João Silva"
-                    className="w-full px-4 py-3 rounded-xl axis-surface axis-text-main text-sm focus:outline-none focus:border-[#cfaf82]"
+                    className="w-full px-4 py-3 rounded-xl axis-surface axis-text-main text-base sm:text-sm focus:outline-none focus:border-[#cfaf82]"
                   />
                 </div>
 
@@ -125,7 +145,7 @@ const DiagnosisModal = () => {
                       setFormData({ ...formData, company: e.target.value })
                     }
                     placeholder="Nome da sua empresa"
-                    className="w-full px-4 py-3 rounded-xl axis-surface axis-text-main text-sm focus:outline-none focus:border-[#cfaf82]"
+                    className="w-full px-4 py-3 rounded-xl axis-surface axis-text-main text-base sm:text-sm focus:outline-none focus:border-[#cfaf82]"
                   />
                 </div>
               </div>
@@ -140,7 +160,7 @@ const DiagnosisModal = () => {
                     onChange={(e) =>
                       setFormData({ ...formData, role: e.target.value })
                     }
-                    className="w-full px-4 py-3 rounded-xl axis-surface axis-text-main text-sm focus:outline-none focus:border-[#cfaf82]"
+                    className="w-full px-4 py-3 rounded-xl axis-surface axis-text-main text-base sm:text-sm focus:outline-none focus:border-[#cfaf82]"
                   >
                     <option value="Sócio / Proprietário">
                       Sócio / Proprietário
@@ -166,7 +186,7 @@ const DiagnosisModal = () => {
                     onChange={(e) =>
                       setFormData({ ...formData, teamSize: e.target.value })
                     }
-                    className="w-full px-4 py-3 rounded-xl axis-surface axis-text-main text-sm focus:outline-none focus:border-[#cfaf82]"
+                    className="w-full px-4 py-3 rounded-xl axis-surface axis-text-main text-base sm:text-sm focus:outline-none focus:border-[#cfaf82]"
                   >
                     <option value="Até 10 colaboradores">
                       Até 10 colaboradores
@@ -197,7 +217,7 @@ const DiagnosisModal = () => {
                       setFormData({ ...formData, whatsapp: e.target.value })
                     }
                     placeholder="(44) 99999-9999"
-                    className="w-full px-4 py-3 rounded-xl axis-surface axis-text-main text-sm focus:outline-none focus:border-[#cfaf82]"
+                    className="w-full px-4 py-3 rounded-xl axis-surface axis-text-main text-base sm:text-sm focus:outline-none focus:border-[#cfaf82]"
                   />
                 </div>
 
@@ -211,7 +231,7 @@ const DiagnosisModal = () => {
                     onChange={(e) =>
                       setFormData({ ...formData, bottleneck: e.target.value })
                     }
-                    className="w-full px-4 py-3 rounded-xl axis-surface axis-text-main text-sm focus:outline-none focus:border-[#cfaf82]"
+                    className="w-full px-4 py-3 rounded-xl axis-surface axis-text-main text-base sm:text-sm focus:outline-none focus:border-[#cfaf82]"
                   />
                 </div>
               </div>
@@ -227,7 +247,7 @@ const DiagnosisModal = () => {
                     setFormData({ ...formData, notes: e.target.value })
                   }
                   placeholder="Conte brevemente sobre o momento da empresa (ex: processos centralizados no dono, alinhamento de líderes, necessidade de indicadores)..."
-                  className="w-full px-4 py-3 rounded-xl axis-surface axis-text-main text-sm focus:outline-none focus:border-[#cfaf82]"
+                  className="w-full px-4 py-3 rounded-xl axis-surface axis-text-main text-base sm:text-sm focus:outline-none focus:border-[#cfaf82]"
                 />
               </div>
 
@@ -249,9 +269,20 @@ const DiagnosisModal = () => {
             </form>
           </>
         ) : (
-          <div className="text-center py-6">
-            <div className="w-16 h-16 rounded-full bg-[#cfaf82]/20 text-[#cfaf82] flex items-center justify-center mx-auto mb-5 text-2xl font-bold">
-              ✓
+          <div className="text-center py-6 t-step-enter">
+            <div className="t-success-circle w-16 h-16 rounded-full bg-[#cfaf82]/20 text-[#cfaf82] flex items-center justify-center mx-auto mb-5">
+              <svg
+                className="w-8 h-8"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path className="t-success-check" d="M5 13l4 4L19 7" />
+              </svg>
             </div>
             <h3 className="text-2xl font-bold axis-text-main mb-2">
               Solicitação de Diagnóstico Estruturada!

@@ -52,6 +52,15 @@ html.dark {
   --gold-dark: #9a7a4f;
   --accent-blue: #0071e3;
   --shadow-card: 0 24px 60px -15px rgba(0, 0, 0, 0.7);
+
+  /* Semantic Motion Tokens (transitions.dev + emilkowalski/skills) */
+  --duration-instant: 120ms;
+  --duration-quick: 180ms;
+  --duration-normal: 280ms;
+  --duration-slow: 420ms;
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-out-quart: cubic-bezier(0.25, 1, 0.5, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 
 html.light {
@@ -93,13 +102,23 @@ html.light {
   scrollbar-color: var(--gold-primary) var(--bg-primary);
 }
 
+/* Mobile-Native: remove tap highlight flash on interactive controls */
+button,
+a,
+input,
+select,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
 html {
   width: 100%;
   overflow-x: clip;
   scroll-behavior: smooth;
   background-color: var(--bg-primary);
   color: var(--text-primary);
-  transition: background-color 0.35s ease, color 0.35s ease;
+  transition: background-color var(--duration-normal) var(--ease-out-quart),
+    color var(--duration-normal) var(--ease-out-quart);
 }
 
 body {
@@ -110,7 +129,8 @@ body {
   font-family: var(--font-regular);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  transition: background-color 0.35s ease, color 0.35s ease;
+  transition: background-color var(--duration-normal) var(--ease-out-quart),
+    color var(--duration-normal) var(--ease-out-quart);
 }
 
 /* Custom Brand Utilities */
@@ -144,7 +164,10 @@ html.light .text-gold-gradient {
   background-color: var(--bg-secondary);
   border: 1px solid var(--border-card);
   box-shadow: var(--shadow-card);
-  transition: background-color 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease, transform 0.35s ease;
+  transition: background-color var(--duration-normal) var(--ease-out-quart),
+    border-color var(--duration-normal) var(--ease-out-quart),
+    box-shadow var(--duration-normal) var(--ease-out-quart),
+    transform var(--duration-normal) var(--ease-out-expo);
   overflow: hidden;
 }
 
@@ -160,17 +183,166 @@ html.light .text-gold-gradient {
     transparent 45%
   );
   opacity: 0;
-  transition: opacity 0.4s ease;
+  transition: opacity var(--duration-normal) var(--ease-out-quart);
   z-index: 0;
 }
 
-.axis-surface:hover::before {
-  opacity: 1;
+@media (hover: hover) and (pointer: fine) {
+  .axis-surface:hover::before {
+    opacity: 1;
+  }
 }
 
 .axis-surface > * {
   position: relative;
   z-index: 1;
+}
+
+/* =========================================================
+   Transitions.dev-inspired UI Motion Utilities
+   ========================================================= */
+
+/* Smooth CSS Grid Accordion */
+.t-accordion {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  transition: grid-template-rows var(--duration-normal) var(--ease-out-expo),
+    opacity var(--duration-quick) var(--ease-out-quart);
+}
+
+.t-accordion[data-open="true"] {
+  grid-template-rows: 1fr;
+  opacity: 1;
+}
+
+.t-accordion > div {
+  overflow: hidden;
+}
+
+/* Modal Backdrop & Panel */
+@keyframes modalBackdropIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modalPanelIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.t-modal-backdrop {
+  animation: modalBackdropIn var(--duration-quick) var(--ease-out-quart) both;
+}
+
+.t-modal-panel {
+  animation: modalPanelIn var(--duration-normal) var(--ease-out-expo) both;
+}
+
+/* Mobile Drawer Reveal */
+@keyframes drawerReveal {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.t-drawer {
+  animation: drawerReveal var(--duration-quick) var(--ease-out-expo) both;
+}
+
+/* Step Swap (Quiz / Multi-step) */
+@keyframes stepEnter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.t-step-enter {
+  animation: stepEnter var(--duration-normal) var(--ease-out-expo) both;
+}
+
+/* Animated Success Checkmark */
+@keyframes checkDraw {
+  from {
+    stroke-dashoffset: 48;
+  }
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes checkPop {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.t-success-circle {
+  animation: checkPop var(--duration-normal) var(--ease-spring) both;
+}
+
+.t-success-check {
+  stroke-dasharray: 48;
+  stroke-dashoffset: 48;
+  animation: checkDraw 380ms var(--ease-out-expo) 120ms forwards;
+}
+
+/* React Bits-inspired Metallic Shiny Text */
+@keyframes shinySweep {
+  0% {
+    background-position: 150% 0;
+  }
+  100% {
+    background-position: -150% 0;
+  }
+}
+
+.shiny-text {
+  background-image: linear-gradient(
+    110deg,
+    #cfaf82 35%,
+    #fff4df 50%,
+    #cfaf82 65%
+  );
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shinySweep 5.5s linear infinite;
+}
+
+html.light .shiny-text {
+  background-image: linear-gradient(
+    110deg,
+    #745934 35%,
+    #c8a067 50%,
+    #745934 65%
+  );
 }
 
 @keyframes orbitSpinSlow {
@@ -210,6 +382,34 @@ html.light .text-gold-gradient {
 
 .animate-pulse-beam {
   animation: pulseBeam 3.2s ease-in-out infinite;
+}
+
+/* Accessibility: Reduced Motion Guard */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .animate-orbit-slow,
+  .animate-orbit-reverse,
+  .animate-pulse-beam,
+  .shiny-text {
+    animation: none !important;
+  }
+
+  .t-modal-backdrop,
+  .t-modal-panel,
+  .t-drawer,
+  .t-step-enter,
+  .t-success-circle,
+  .t-success-check {
+    animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
+  }
+
+  .t-accordion {
+    transition-duration: 0.01ms !important;
+  }
 }
 
 .axis-glass {

@@ -112,14 +112,14 @@ const MaturityQuiz = () => {
         {/* Quiz Card */}
         <div className="quiz-container max-w-4xl mx-auto axis-surface rounded-3xl p-6 sm:p-10 lg:p-12 border border-[#cfaf82]/35">
           {!showResult ? (
-            <div>
+            <div key={`step-${currentStep}`} className="t-step-enter">
               {/* Top Progress Header */}
               <div className="flex flex-wrap items-center justify-between gap-3 mb-6">
                 <span className="px-3.5 py-1 rounded-full text-xs font-bold uppercase tracking-wider bg-[#cfaf82]/15 text-[#cfaf82] border border-[#cfaf82]/30">
                   Eixo {currentStep + 1} de {maturityQuizQuestions.length}:{" "}
                   {currentQ.pillar}
                 </span>
-                <span className="text-xs font-semibold axis-text-muted">
+                <span className="text-xs font-semibold axis-text-muted tabular-nums">
                   Progresso:{" "}
                   {Math.round(
                     ((currentStep + 1) / maturityQuizQuestions.length) * 100
@@ -131,7 +131,7 @@ const MaturityQuiz = () => {
               {/* Progress Bar */}
               <div className="w-full h-1.5 rounded-full bg-white/10 overflow-hidden mb-8">
                 <div
-                  className="h-full bg-gold-gradient transition-all duration-500 rounded-full"
+                  className="h-full bg-gold-gradient transition-[width] duration-500 ease-out rounded-full"
                   style={{
                     width: `${
                       ((currentStep + 1) / maturityQuizQuestions.length) * 100
@@ -155,7 +155,7 @@ const MaturityQuiz = () => {
                       key={idx}
                       type="button"
                       onClick={() => handleSelectOption(currentQ.id, opt)}
-                      className={`w-full text-left p-4 sm:p-5 rounded-2xl border transition-all duration-200 cursor-pointer flex items-center justify-between gap-4 group ${
+                      className={`w-full text-left p-4 sm:p-5 rounded-2xl border transition-[border-color,background-color,transform] duration-200 active:scale-[0.985] cursor-pointer flex items-center justify-between gap-4 group ${
                         isSelected
                           ? "border-[#cfaf82] bg-[#cfaf82]/15"
                           : "border-white/10 bg-black/15 hover:border-[#cfaf82]/60"
@@ -192,7 +192,7 @@ const MaturityQuiz = () => {
             </div>
           ) : (
             /* Results Screen */
-            <div>
+            <div key="quiz-result" className="t-step-enter">
               <div className="flex flex-col lg:flex-row items-center justify-between gap-8 pb-8 border-b border-white/10">
                 <div className="text-center lg:text-left max-w-xl">
                   <span
@@ -213,7 +213,7 @@ const MaturityQuiz = () => {
                   <span className="block text-[10px] uppercase tracking-[0.2em] axis-text-muted mb-1">
                     Score de Maturidade
                   </span>
-                  <span className="block text-4xl sm:text-5xl font-bold text-gold-gradient">
+                  <span className="block text-4xl sm:text-5xl font-bold text-gold-gradient tabular-nums">
                     {totalScore}%
                   </span>
                   <span className="block text-[11px] text-[#cfaf82] mt-1 font-medium">

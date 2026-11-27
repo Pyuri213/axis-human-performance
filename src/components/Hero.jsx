@@ -3,6 +3,8 @@ import { useGSAP } from "@gsap/react";
 import gsap from "gsap";
 import { companyInfo } from "../constants";
 import useMacbookStore from "../store";
+import ShinyText from "./ui/ShinyText";
+import MagneticButton from "./ui/MagneticButton";
 
 const Hero = () => {
   const heroRef = useRef(null);
@@ -11,43 +13,55 @@ const Hero = () => {
 
   useGSAP(
     () => {
-      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
-      tl.fromTo(
-        ".hero-badge",
-        { opacity: 0, y: 20, filter: "blur(6px)" },
-        { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.7 }
-      )
-        .fromTo(
-          ".hero-logo",
-          { opacity: 0, scale: 0.88, filter: "blur(8px)" },
-          { opacity: 1, scale: 1, filter: "blur(0px)", duration: 1 },
-          "-=0.4"
+      const mm = gsap.matchMedia();
+
+      mm.add("(prefers-reduced-motion: no-preference)", () => {
+        const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+        tl.fromTo(
+          ".hero-badge",
+          { opacity: 0, y: 14 },
+          { opacity: 1, y: 0, duration: 0.45 }
         )
-        .fromTo(
-          ".hero-title",
-          { opacity: 0, y: 30, filter: "blur(10px)" },
-          { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.9 },
-          "-=0.5"
-        )
-        .fromTo(
-          ".hero-subtitle",
-          { opacity: 0, y: 22, filter: "blur(6px)" },
-          { opacity: 1, y: 0, filter: "blur(0px)", duration: 0.8 },
-          "-=0.5"
-        )
-        .fromTo(
-          ".hero-actions",
-          { opacity: 0, y: 18 },
-          { opacity: 1, y: 0, duration: 0.7, stagger: 0.12 },
-          "-=0.4"
-        );
+          .fromTo(
+            ".hero-logo",
+            { opacity: 0, scale: 0.94 },
+            { opacity: 1, scale: 1, duration: 0.6 },
+            "-=0.25"
+          )
+          .fromTo(
+            ".hero-title",
+            { opacity: 0, y: 20 },
+            { opacity: 1, y: 0, duration: 0.6 },
+            "-=0.35"
+          )
+          .fromTo(
+            ".hero-subtitle",
+            { opacity: 0, y: 16 },
+            { opacity: 1, y: 0, duration: 0.55 },
+            "-=0.35"
+          )
+          .fromTo(
+            ".hero-actions",
+            { opacity: 0, y: 14 },
+            { opacity: 1, y: 0, duration: 0.5, stagger: 0.08 },
+            "-=0.3"
+          );
+      });
+
+      return () => mm.revert();
     },
     { scope: heroRef }
   );
 
-  // Interactive 3D Parallax on Hero Logo
+  // Interactive 3D Parallax on Hero Logo (desktop fine pointers only)
   const handleMouseMove = (e) => {
-    if (!logoOrbitalRef.current || window.innerWidth < 1024) return;
+    if (
+      !logoOrbitalRef.current ||
+      window.innerWidth < 1024 ||
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      return;
+    }
     const rect = e.currentTarget.getBoundingClientRect();
     const relX = (e.clientX - rect.left) / rect.width - 0.5;
     const relY = (e.clientY - rect.top) / rect.height - 0.5;
@@ -80,7 +94,7 @@ const Hero = () => {
       ref={heroRef}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="relative min-h-screen pt-28 sm:pt-32 lg:pt-36 pb-16 overflow-hidden flex flex-col items-center justify-center"
+      className="relative min-h-dvh pt-28 sm:pt-32 lg:pt-36 pb-16 overflow-hidden flex flex-col items-center justify-center"
       style={{ perspective: "1000px" }}
     >
       {/* Subtle Ambient Gold Radial Glow */}
@@ -93,9 +107,9 @@ const Hero = () => {
         {/* Top Executive Badge */}
         <div className="hero-badge inline-flex items-center gap-2.5 px-4 py-1.5 rounded-full axis-surface border-gold-subtle mb-6 sm:mb-8">
           <span className="w-2 h-2 rounded-full bg-[#cfaf82] animate-pulse" />
-          <span className="text-[11px] sm:text-xs font-semibold tracking-[0.22em] uppercase text-gold-gradient">
+          <ShinyText className="text-[11px] sm:text-xs font-semibold tracking-[0.22em] uppercase">
             {companyInfo.tagline} • Maringá / PR
-          </span>
+          </ShinyText>
         </div>
 
         {/* Official AXIS Full Logo Lockup with Animated Orbital Rings */}
@@ -143,7 +157,7 @@ const Hero = () => {
         <div className="hero-actions mt-7 sm:mt-9 flex flex-wrap items-center justify-center gap-2 sm:gap-3">
           {companyInfo.formula.map((item, idx) => (
             <div key={item} className="flex items-center gap-2 sm:gap-3">
-              <span className="px-4 py-2 rounded-full text-xs sm:text-sm font-medium axis-surface axis-text-main border border-[#cfaf82]/25 hover:border-[#cfaf82] hover:-translate-y-0.5 transition-all">
+              <span className="px-4 py-2 rounded-full text-xs sm:text-sm font-medium axis-surface axis-text-main border border-[#cfaf82]/25 lg:hover:border-[#cfaf82] lg:hover:-translate-y-0.5 transition-[transform,border-color] duration-200">
                 {item}
               </span>
               {idx < companyInfo.formula.length - 1 && (
@@ -157,10 +171,10 @@ const Hero = () => {
 
         {/* Primary & Secondary Call-To-Action Buttons */}
         <div className="hero-actions flex flex-col sm:flex-row items-center justify-center gap-3.5 sm:gap-5 w-full sm:w-auto mt-9 sm:mt-11">
-          <button
+          <MagneticButton
             type="button"
             onClick={() => openDiagnosisModal("Hero - Diagnóstico Executivo")}
-            className="w-full sm:w-auto px-8 py-4 rounded-full text-sm sm:text-base font-semibold text-black bg-gold-gradient hover:brightness-110 hover:scale-[1.03] transition-all duration-300 shadow-xl cursor-pointer flex items-center justify-center gap-2.5"
+            className="w-full sm:w-auto px-8 py-4 rounded-full text-sm sm:text-base font-semibold text-black bg-gold-gradient hover:brightness-110 shadow-xl cursor-pointer flex items-center justify-center gap-2.5"
           >
             <span>Agendar Diagnóstico Empresarial</span>
             <svg
@@ -176,11 +190,11 @@ const Hero = () => {
                 d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"
               />
             </svg>
-          </button>
+          </MagneticButton>
 
           <a
             href="#pillars"
-            className="w-full sm:w-auto px-8 py-4 rounded-full text-sm sm:text-base font-semibold axis-surface axis-text-main hover:border-[#cfaf82] transition-all duration-300 flex items-center justify-center gap-2"
+            className="w-full sm:w-auto px-8 py-4 rounded-full text-sm sm:text-base font-semibold axis-surface axis-text-main lg:hover:border-[#cfaf82] active:scale-[0.97] transition-[transform,border-color] duration-200 flex items-center justify-center gap-2"
           >
             <span>Conhecer os 3 Pilares</span>
           </a>
