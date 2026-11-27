@@ -38,6 +38,7 @@
 
 :root,
 html.dark {
+  color-scheme: dark;
   --bg-primary: #070709;
   --bg-secondary: #101015;
   --bg-elevated: #17171f;
@@ -64,6 +65,7 @@ html.dark {
 }
 
 html.light {
+  color-scheme: light;
   --bg-primary: #f7f7fa;
   --bg-secondary: #ffffff;
   --bg-elevated: #eeeef4;

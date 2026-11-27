@@ -196,7 +196,7 @@ const DiagnosisModal = () => {
       aria-modal="true"
       aria-labelledby="modal-title"
     >
-      <div className="t-modal-panel axis-surface w-full max-w-2xl rounded-3xl p-5 sm:p-8 lg:p-9 border border-[#cfaf82]/40 my-auto max-h-[92dvh] overflow-y-auto">
+      <div className="t-modal-panel axis-surface w-full max-w-2xl rounded-3xl p-5 sm:p-8 lg:p-9 border border-[#cfaf82]/40 my-auto max-h-[92dvh] overflow-y-auto overscroll-contain">
         {/* Top Bar: Brand Badge + Close Button (Flex layout prevents overlap) */}
         <div className="flex items-start justify-between gap-3 mb-4">
           <div className="flex items-center gap-2.5 min-w-0">
@@ -214,7 +214,7 @@ const DiagnosisModal = () => {
             type="button"
             onClick={closeDiagnosisModal}
             aria-label="Fechar modal"
-            className="w-9 h-9 shrink-0 rounded-full axis-surface flex items-center justify-center axis-text-main hover:border-[#cfaf82] active:scale-90 transition-[transform,border-color] duration-200 cursor-pointer"
+            className="w-10 h-10 shrink-0 rounded-full axis-surface flex items-center justify-center axis-text-main hover:border-[#cfaf82] active:scale-90 transition-[transform,border-color] duration-200 cursor-pointer"
           >
             ✕
           </button>
